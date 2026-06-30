@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AMIBIOS Setup Utility</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Perfect+DOS+VGA+437&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0000aa;
+    color: #aaaaaa;
+    font-family: 'Perfect DOS VGA 437', 'Courier New', 'Consolas', monospace;
+    font-size: 16px;
+    line-height: 1.4;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    user-select: none;
+    cursor: default;
+    overflow: hidden;
+    height: 100vh;
+  }
+
+  /* ── Top banner ── */
+  .top-banner {
+    background: #aaaaaa;
+    color: #0000aa;
+    text-align: center;
+    padding: 2px 0;
+    font-weight: bold;
+    letter-spacing: 1px;
+  }
+
+  /* ── Tab bar ── */
+  .tab-bar {
+    display: flex;
+    justify-content: center;
+    background: #0000aa;
+    padding: 4px 0 0 0;
+    gap: 0;
+  }
+  .tab {
+    padding: 2px 20px;
+    color: #ffffff;
+    background: #0000aa;
+    border: none;
+    font-family: inherit;
+    font-size: inherit;
+    cursor: pointer;
+    position: relative;
+  }
+  .tab.active {
+    background: #aaaaaa;
+    color: #0000aa;
+    font-weight: bold;
+  }
+  .tab:not(.active):hover {
+    color: #ffff55;
+  }
+
+  /* ── Divider line ── */
+  .divider {
+    background: #aaaaaa;
+    height: 2px;
+    width: 100%;
+  }
+
+  /* ── Main content area ── */
+  .content-area {
+    flex: 1;
+    display: flex;
+    padding: 8px 16px;
+    gap: 0;
+    overflow: hidden;
+  }
+
+  /* Left settings panel */
+  .settings-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    min-width: 0;
+  }
+
+  .section-header {
+    color: #ffffff;
+    font-weight: bold;
+    padding: 4px 0;
+    margin-top: 8px;
+  }
+  .section-header:first-child {
+    margin-top: 0;
+  }
+
+  .setting-row {
+    display: flex;
+    padding: 1px 4px;
+    cursor: pointer;
+  }
+  .setting-row:hover {
+    background: #555555;
+  }
+  .setting-row.selected {
+    background: #aaaaaa;
+    color: #0000aa;
+  }
+  .setting-row.selected .setting-value {
+    color: #0000aa;
+  }
+  .setting-label {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .setting-value {
+    color: #ffffff;
+    text-align: right;
+    min-width: 200px;
+    white-space: nowrap;
+  }
+  .setting-value .bracket {
+    color: #ffff55;
+  }
+
+  /* ── Right help panel ── */
+  .help-panel-wrapper {
+    width: 280px;
+    min-width: 280px;
+    border-left: 2px solid #aaaaaa;
+    margin-left: 16px;
+    padding-left: 12px;
+    display: flex;
+    flex-direction: column;
+  }
+  .help-title {
+    color: #ffffff;
+    font-weight: bold;
+    text-align: center;
+    padding: 4px 0;
+    border-bottom: 1px solid #aaaaaa;
+    margin-bottom: 8px;
+  }
+  .help-text {
+    color: #aaaaaa;
+    font-size: 14px;
+    line-height: 1.5;
+    flex: 1;
+  }
+
+  .key-hints {
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid #555555;
+    font-size: 13px;
+  }
+  .key-hint {
+    display: flex;
+    gap: 8px;
+    padding: 1px 0;
+  }
+  .key-hint .key {
+    color: #ffff55;
+    min-width: 80px;
+  }
+  .key-hint .desc {
+    color: #aaaaaa;
+  }
+
+  /* ── Bottom bar ── */
+  .bottom-bar {
+    background: #aaaaaa;
+    color: #0000aa;
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    padding: 2px 16px;
+    font-size: 14px;
+    flex-wrap: wrap;
+  }
+  .bottom-item {
+    display: flex;
+    gap: 4px;
+  }
+  .bottom-key {
+    font-weight: bold;
+  }
+
+  /* ── Modal/popup for editing a value ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 100;
+    justify-content: center;
+    align-items: center;
+  }
+  .modal-overlay.open {
+    display: flex;
+  }
+  .modal-box {
+    background: #0000aa;
+    border: 2px solid #aaaaaa;
+    padding: 16px 24px;
+    min-width: 340px;
+    text-align: center;
+  }
+  .modal-title {
+    color: #ffffff;
+    font-weight: bold;
+    margin-bottom: 12px;
+  }
+  .modal-options {
+    text-align: left;
+    margin: 8px 0;
+  }
+  .modal-option {
+    padding: 2px 8px;
+    cursor: pointer;
+    color: #aaaaaa;
+  }
+  .modal-option:hover {
+    background: #555555;
+  }
+  .modal-option.selected {
+    background: #aaaaaa;
+    color: #0000aa;
+  }
+  .modal-footer {
+    margin-top: 12px;
+    font-size: 13px;
+    color: #ffff55;
+  }
+
+  /* ── Time display ── */
+  .time-display {
+    color: #55ffff;
+  }
+
+  /* ── Blinking cursor effect ── */
+  @keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+  }
+  .blink {
+    animation: blink 1s step-end infinite;
+  }
+</style>
+</head>
+<body>
+
+<!-- Top Banner -->
+<div class="top-banner">Aptio Setup Utility - Copyright (C) 2024 American Megatrends, Inc.</div>
+
+<!-- Tab Bar -->
+<div class="tab-bar" id="tabBar">
+  <button class="tab active" data-tab="main">Main</button>
+  <button class="tab" data-tab="advanced">Advanced</button>
+  <button class="tab" data-tab="boot">Boot</button>
+  <button class="tab" data-tab="security">Security</button>
+  <button class="tab" data-tab="save">Save &amp; Exit</button>
+</div>
+<div class="divider"></div>
+
+<!-- Content -->
+<div class="content-area">
+  <!-- Settings -->
+  <div class="settings-panel" id="settingsPanel"></div>
+
+  <!-- Help Panel -->
+  <div class="help-panel-wrapper">
+    <div class="help-title">Item Specific Help</div>
+    <div class="help-text" id="helpText">
+      Use [ENTER] to select a field and modify its value.
+
+      Use arrow keys to navigate between items.
+    </div>
+    <div class="key-hints">
+      <div class="key-hint"><span class="key">↑↓</span><span class="desc">Select Item</span></div>
+      <div class="key-hint"><span class="key">←→</span><span class="desc">Select Tab</span></div>
+      <div class="key-hint"><span class="key">Enter</span><span class="desc">Change Value</span></div>
+      <div class="key-hint"><span class="key">+/-</span><span class="desc">Modify Value</span></div>
+      <div class="key-hint"><span class="key">F1</span><span class="desc">General Help</span></div>
+      <div class="key-hint"><span class="key">F9</span><span class="desc">Optimized Defaults</span></div>
+      <div class="key-hint"><span class="key">F10</span><span class="desc">Save & Exit</span></div>
+      <div class="key-hint"><span class="key">ESC</span><span class="desc">Exit</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- Bottom Bar -->
+<div class="bottom-bar">
+  <div class="bottom-item"><span class="bottom-key">→←</span> Select Screen</div>
+  <div class="bottom-item"><span class="bottom-key">↑↓</span> Select Item</div>
+  <div class="bottom-item"><span class="bottom-key">Enter</span> Select</div>
+  <div class="bottom-item"><span class="bottom-key">+/-</span> Change Value</div>
+  <div class="bottom-item"><span class="bottom-key">F1</span> Help</div>
+  <div class="bottom-item"><span class="bottom-key">F9</span> Setup Defaults</div>
+  <div class="bottom-item"><span class="bottom-key">F10</span> Save & Exit</div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-box">
+    <div class="modal-title" id="modalTitle"></div>
+    <div class="modal-options" id="modalOptions"></div>
+    <div class="modal-footer">↑↓ Move  Enter: Select  Esc: Cancel</div>
+  </div>
+</div>
+
+<script>
+// ── DATA ──
+const tabData = {
+  main: {
+    sections: [
+      {
+        title: "System Overview",
+        items: [
+          { label: "BIOS Version", value: "F.42 REV A", readonly: true },
+          { label: "Build Date", value: "06/09/2024", readonly: true },
+          { label: "Processor Type", value: "Intel Core i7-13700K @ 3.40GHz", readonly: true },
+          { label: "Speed", value: "3400 MHz", readonly: true },
+          { label: "Total Memory", value: "32768 MB (DDR5)", readonly: true },
+          { label: "Memory Channel", value: "Dual", readonly: true },
+        ]
+      },
+      {
+        title: "System Date / Time",
+        items: [
+          { label: "System Date", value: "06/09/2026", help: "Set the system date. Use Tab to switch between fields. Format: MM/DD/YYYY" },
+          { label: "System Time", value: null, time: true, help: "Set the system time. Use Tab to switch between fields. Format: HH:MM:SS" },
+          { label: "Access Level", value: "Administrator", readonly: true },
+        ]
+      }
+    ]
+  },
+  advanced: {
+    sections: [
+      {
+        title: "CPU Configuration",
+        items: [
+          { label: "Hyper-Threading", value: "Enabled", options: ["Enabled", "Disabled"], help: "Enable or disable Intel Hyper-Threading Technology. When enabled, each physical core appears as two logical processors." },
+          { label: "Active Processor Cores", value: "All", options: ["All", "1", "2", "4", "8"], help: "Select the number of active processor cores. 'All' enables all available cores." },
+          { label: "Intel SpeedStep", value: "Enabled", options: ["Enabled", "Disabled"], help: "Enable or disable Intel SpeedStep Technology for CPU power management." },
+          { label: "Turbo Boost", value: "Enabled", options: ["Enabled", "Disabled"], help: "Enable or disable Intel Turbo Boost Technology 2.0." },
+          { label: "C-States", value: "Auto", options: ["Auto", "Enabled", "Disabled"], help: "Configure CPU C-States for power saving. Auto lets the BIOS determine the optimal setting." },
+          { label: "VT-x", value: "Enabled", options: ["Enabled", "Disabled"], help: "Intel Virtualization Technology allows hardware platform to run multiple operating systems." },
+          { label: "VT-d", value: "Disabled", options: ["Enabled", "Disabled"], help: "Intel VT for Directed I/O helps improve I/O virtualization performance." },
+        ]
+      },
+      {
+        title: "SATA Configuration",
+        items: [
+          { label: "SATA Mode Selection", value: "AHCI", options: ["AHCI", "RAID", "IDE"], help: "Set the SATA controller mode. AHCI mode enables native SATA features. RAID mode enables Intel RST." },
+          { label: "SATA Port 0", value: "Samsung 990 PRO 2TB", readonly: true },
+          { label: "SATA Port 1", value: "WD Black SN850X 1TB", readonly: true },
+          { label: "SATA Port 2", value: "Not Detected", readonly: true },
+        ]
+      },
+      {
+        title: "USB Configuration",
+        items: [
+          { label: "Legacy USB Support", value: "Enabled", options: ["Enabled", "Disabled", "Auto"], help: "Enable support for legacy USB devices like keyboards and mice in DOS." },
+          { label: "XHCI Hand-off", value: "Enabled", options: ["Enabled", "Disabled"], help: "Enable XHCI Hand-off for OS without XHCI hand-off support." },
+        ]
+      }
+    ]
+  },
+  boot: {
+    sections: [
+      {
+        title: "Boot Configuration",
+        items: [
+          { label: "Fast Boot", value: "Disabled", options: ["Enabled", "Disabled"], help: "Enable or disable fast boot to reduce POST time. Some devices may not be available during boot." },
+          { label: "Quiet Boot", value: "Enabled", options: ["Enabled", "Disabled"], help: "Show or hide the logo during POST." },
+          { label: "Boot Mode", value: "UEFI", options: ["UEFI", "Legacy", "UEFI + Legacy"], help: "Select the boot mode. UEFI mode supports GPT partitioned disks and Secure Boot." },
+          { label: "Secure Boot", value: "Enabled", options: ["Enabled", "Disabled"], help: "Enable or disable UEFI Secure Boot to protect against unauthorized boot loaders." },
+          { label: "Network Boot", value: "Disabled", options: ["Enabled", "Disabled"], help: "Enable PXE network boot capability." },
+        ]
+      },
+      {
+        title: "Boot Priority Order",
+        items: [
+          { label: "Boot Option #1", value: "Samsung 990 PRO 2TB", options: ["Samsung 990 PRO 2TB", "WD Black SN850X 1TB", "USB Device", "Network Boot"], help: "Set the first boot device priority." },
+          { label: "Boot Option #2", value: "USB Device", options: ["Samsung 990 PRO 2TB", "WD Black SN850X 1TB", "USB Device", "Network Boot"], help: "Set the second boot device priority." },
+          { label: "Boot Option #3", value: "Network Boot", options: ["Samsung 990 PRO 2TB", "WD Black SN850X 1TB", "USB Device", "Network Boot"], help: "Set the third boot device priority." },
+        ]
+      }
+    ]
+  },
+  security: {
+    sections: [
+      {
+        title: "Security Settings",
+        items: [
+          { label: "Administrator Password", value: "Not Installed", help: "Set the administrator password. This password is required to enter BIOS Setup." },
+          { label: "User Password", value: "Not Installed", help: "Set the user password. Users with this password have limited access to BIOS settings." },
+          { label: "Password on Boot", value: "Disabled", options: ["Enabled", "Disabled"], help: "Require password during system boot." },
+        ]
+      },
+      {
+        title: "TPM Configuration",
+        items: [
+          { label: "Security Device Support", value: "Enabled", options: ["Enabled", "Disabled"], help: "Enable or disable BIOS support for the security device (TPM)." },
+          { label: "TPM Device", value: "Intel PTT", readonly: true },
+          { label: "TPM State", value: "Enabled & Activated", readonly: true },
+          { label: "SHA-256 PCR Bank", value: "Enabled", options: ["Enabled", "Disabled"], help: "Enable or disable SHA-256 PCR bank for TPM." },
+        ]
+      }
+    ]
+  },
+  save: {
+    sections: [
+      {
+        title: "Save & Exit Options",
+        items: [
+          { label: "Save Changes and Exit", value: "", action: true, help: "Save all changes to CMOS and exit Setup. The system will reboot." },
+          { label: "Discard Changes and Exit", value: "", action: true, help: "Discard all changes and exit Setup. The system will reboot." },
+          { label: "Save Changes", value: "", action: true, help: "Save all current changes to CMOS." },
+          { label: "Discard Changes", value: "", action: true, help: "Discard all changes and restore previous values from CMOS." },
+          { label: "Restore Defaults", value: "", action: true, help: "Load factory default values for all BIOS settings." },
+        ]
+      }
+    ]
+  }
+};
+
+// ── STATE ──
+let currentTab = "main";
+let selectedIndex = 0;
+let allItems = [];
+let modalOpen = false;
+let modalSelectedIndex = 0;
+let modalOptions = [];
+let modalItemIndex = -1;
+
+// ── RENDER ──
+function getTimeString() {
+  const now = new Date();
+  return now.toLocaleTimeString('en-US', { hour12: false });
+}
+
+function renderSettings() {
+  const panel = document.getElementById('settingsPanel');
+  const data = tabData[currentTab];
+  allItems = [];
+  let html = '';
+  let globalIdx = 0;
+
+  data.sections.forEach(section => {
+    html += `<div class="section-header">${section.title}</div>`;
+    section.items.forEach(item => {
+      const isSelected = globalIdx === selectedIndex;
+      const cls = isSelected ? 'setting-row selected' : 'setting-row';
+      let valDisplay;
+      if (item.time) {
+        valDisplay = `<span class="time-display">${getTimeString()}</span>`;
+      } else if (item.action) {
+        valDisplay = '';
+      } else if (item.options) {
+        valDisplay = `<span class="bracket">[</span>${item.value}<span class="bracket">]</span>`;
+      } else {
+        valDisplay = item.value;
+      }
+      html += `<div class="${cls}" data-idx="${globalIdx}" onclick="selectItem(${globalIdx})">
+        <span class="setting-label">${item.readonly ? '  ' : item.action ? '▸ ' : '  '}${item.label}</span>
+        <span class="setting-value">${valDisplay}</span>
+      </div>`;
+      allItems.push({ ...item, globalIdx });
+      globalIdx++;
+    });
+  });
+
+  panel.innerHTML = html;
+  updateHelp();
+}
+
+function updateHelp() {
+  const helpEl = document.getElementById('helpText');
+  const item = allItems[selectedIndex];
+  if (item && item.help) {
+    helpEl.textContent = item.help;
+  } else if (item && item.readonly) {
+    helpEl.textContent = "This field is read-only and shows current system information.";
+  } else {
+    helpEl.textContent = "Use [ENTER] to select a field and modify its value.\n\nUse arrow keys to navigate between items.";
+  }
+}
+
+function selectItem(idx) {
+  selectedIndex = idx;
+  renderSettings();
+}
+
+function switchTab(tabName) {
+  currentTab = tabName;
+  selectedIndex = 0;
+  document.querySelectorAll('.tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.tab === tabName);
+  });
+  renderSettings();
+}
+
+// ── MODAL ──
+function openModal(itemIdx) {
+  const item = allItems[itemIdx];
+  if (!item || item.readonly) return;
+
+  if (item.action) {
+    // Flash effect for action items
+    const row = document.querySelector(`[data-idx="${itemIdx}"]`);
+    if (row) {
+      row.style.background = '#ffffff';
+      row.style.color = '#0000aa';
+      setTimeout(() => renderSettings(), 300);
+    }
+    return;
+  }
+
+  if (!item.options) return;
+
+  modalOpen = true;
+  modalItemIndex = itemIdx;
+  modalOptions = item.options;
+  modalSelectedIndex = modalOptions.indexOf(item.value);
+  if (modalSelectedIndex < 0) modalSelectedIndex = 0;
+
+  document.getElementById('modalTitle').textContent = item.label;
+  renderModalOptions();
+  document.getElementById('modal').classList.add('open');
+}
+
+function renderModalOptions() {
+  const container = document.getElementById('modalOptions');
+  container.innerHTML = modalOptions.map((opt, i) => {
+    const cls = i === modalSelectedIndex ? 'modal-option selected' : 'modal-option';
+    return `<div class="${cls}" onclick="selectModalOption(${i})">${opt}</div>`;
+  }).join('');
+}
+
+function selectModalOption(i) {
+  modalSelectedIndex = i;
+  confirmModal();
+}
+
+function confirmModal() {
+  // Update the data
+  const item = allItems[modalItemIndex];
+  const newValue = modalOptions[modalSelectedIndex];
+
+  // Find and update in tabData
+  let globalIdx = 0;
+  const data = tabData[currentTab];
+  for (const section of data.sections) {
+    for (const sItem of section.items) {
+      if (globalIdx === modalItemIndex) {
+        sItem.value = newValue;
+        break;
+      }
+      globalIdx++;
+    }
+  }
+
+  closeModal();
+  renderSettings();
+}
+
+function closeModal() {
+  modalOpen = false;
+  document.getElementById('modal').classList.remove('open');
+}
+
+// ── KEYBOARD ──
+document.addEventListener('keydown', e => {
+  e.preventDefault();
+
+  if (modalOpen) {
+    switch (e.key) {
+      case 'ArrowUp':
+        modalSelectedIndex = Math.max(0, modalSelectedIndex - 1);
+        renderModalOptions();
+        break;
+      case 'ArrowDown':
+        modalSelectedIndex = Math.min(modalOptions.length - 1, modalSelectedIndex + 1);
+        renderModalOptions();
+        break;
+      case 'Enter':
+        confirmModal();
+        break;
+      case 'Escape':
+        closeModal();
+        break;
+    }
+    return;
+  }
+
+  const tabs = ['main', 'advanced', 'boot', 'security', 'save'];
+  const tabIdx = tabs.indexOf(currentTab);
+
+  switch (e.key) {
+    case 'ArrowUp':
+      selectedIndex = Math.max(0, selectedIndex - 1);
+      renderSettings();
+      break;
+    case 'ArrowDown':
+      selectedIndex = Math.min(allItems.length - 1, selectedIndex + 1);
+      renderSettings();
+      break;
+    case 'ArrowLeft':
+      if (tabIdx > 0) switchTab(tabs[tabIdx - 1]);
+      break;
+    case 'ArrowRight':
+      if (tabIdx < tabs.length - 1) switchTab(tabs[tabIdx + 1]);
+      break;
+    case 'Enter':
+      openModal(selectedIndex);
+      break;
+    case '+':
+    case '=':
+      cycleValue(1);
+      break;
+    case '-':
+      cycleValue(-1);
+      break;
+    case 'Escape':
+      // flash effect
+      break;
+  }
+});
+
+function cycleValue(direction) {
+  const item = allItems[selectedIndex];
+  if (!item || !item.options) return;
+  const curIdx = item.options.indexOf(item.value);
+  let newIdx = curIdx + direction;
+  if (newIdx < 0) newIdx = item.options.length - 1;
+  if (newIdx >= item.options.length) newIdx = 0;
+
+  let globalIdx = 0;
+  const data = tabData[currentTab];
+  for (const section of data.sections) {
+    for (const sItem of section.items) {
+      if (globalIdx === selectedIndex) {
+        sItem.value = item.options[newIdx];
+        break;
+      }
+      globalIdx++;
+    }
+  }
+  renderSettings();
+}
+
+// ── TAB CLICKS ──
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+});
+
+// ── CLOCK UPDATE ──
+setInterval(() => {
+  const timeEls = document.querySelectorAll('.time-display');
+  timeEls.forEach(el => {
+    el.textContent = getTimeString();
+  });
+}, 1000);
+
+// ── INIT ──
+renderSettings();
+</script>
+</body>
+</html>

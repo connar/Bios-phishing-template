@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BIOS/UEFI Setup Utility</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Share Tech Mono', 'Consolas', 'Courier New', monospace;
+    font-size: 15px;
+    line-height: 1.4;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    user-select: none;
+    cursor: default;
+    overflow: hidden;
+    height: 100vh;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  /* ══════════════════════════════════════
+     THEME: CLASSIC AMI (blue)
+     ══════════════════════════════════════ */
+  body.theme-classic {
+    --bg: #0000aa;
+    --fg: #aaaaaa;
+    --fg-bright: #ffffff;
+    --accent: #ffff55;
+    --highlight-bg: #aaaaaa;
+    --highlight-fg: #0000aa;
+    --banner-bg: #aaaaaa;
+    --banner-fg: #0000aa;
+    --border: #aaaaaa;
+    --readonly: #aaaaaa;
+    --hover-bg: #333399;
+    --error-bg: #aa0000;
+    --error-fg: #ffffff;
+    --info: #55ffff;
+    --dim: #555555;
+    --tab-active-bg: #aaaaaa;
+    --tab-active-fg: #0000aa;
+    --tab-fg: #ffffff;
+    --section-fg: #ffffff;
+    --modal-bg: #0000aa;
+    background: var(--bg);
+    color: var(--fg);
+  }
+
+  /* ══════════════════════════════════════
+     THEME: ASUS-STYLE (dark + gold/yellow)
+     ══════════════════════════════════════ */
+  body.theme-asus {
+    --bg: #1a1a1e;
+    --fg: #999999;
+    --fg-bright: #e0e0e0;
+    --accent: #d4a017;
+    --highlight-bg: #d4a017;
+    --highlight-fg: #1a1a1e;
+    --banner-bg: #111114;
+    --banner-fg: #d4a017;
+    --border: #333338;
+    --readonly: #666666;
+    --hover-bg: #2a2a30;
+    --error-bg: #8b0000;
+    --error-fg: #ffcccc;
+    --info: #d4a017;
+    --dim: #444448;
+    --tab-active-bg: #d4a017;
+    --tab-active-fg: #1a1a1e;
+    --tab-fg: #999999;
+    --section-fg: #d4a017;
+    --modal-bg: #222228;
+    background: var(--bg);
+    color: var(--fg);
+  }
+
+  /* ══════════════════════════════════════
+     THEME PICKER SCREEN
+     ══════════════════════════════════════ */
+  .theme-picker {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: #0c0c10;
+    color: #cccccc;
+    gap: 32px;
+  }
+  .theme-picker.hidden { display: none; }
+  .theme-picker h1 {
+    font-size: 20px;
+    color: #ffffff;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .theme-picker p {
+    color: #777;
+    font-size: 13px;
+    max-width: 460px;
+    text-align: center;
+    line-height: 1.6;
+  }
+  .theme-options {
+    display: flex;
+    gap: 24px;
+  }
+  .theme-card {
+    width: 260px;
+    height: 170px;
+    border: 2px solid #333;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.15s;
+  }
+  .theme-card:hover {
+    border-color: #d4a017;
+    transform: scale(1.03);
+  }
+  .theme-card-preview {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    font-size: 11px;
+    line-height: 1.3;
+    padding: 6px 8px;
+  }
+  .theme-card-label {
+    padding: 8px;
+    text-align: center;
+    font-size: 13px;
+    color: #ccc;
+    border-top: 1px solid #333;
+    background: #111;
+  }
+  /* Classic preview colors */
+  .preview-classic {
+    background: #0000aa;
+    color: #aaaaaa;
+  }
+  .preview-classic .prev-banner { background: #aaaaaa; color: #0000aa; padding: 2px 4px; font-weight: bold; font-size: 9px; }
+  .preview-classic .prev-tab-active { color: #0000aa; background: #aaaaaa; padding: 0 4px; }
+  .preview-classic .prev-tab { color: #ffffff; padding: 0 4px; }
+  .preview-classic .prev-row-sel { background: #aaaaaa; color: #0000aa; }
+  .preview-classic .prev-val { color: #ffff55; }
+  /* ASUS preview colors */
+  .preview-asus {
+    background: #1a1a1e;
+    color: #999999;
+  }
+  .preview-asus .prev-banner { background: #111114; color: #d4a017; padding: 2px 4px; font-weight: bold; font-size: 9px; }
+  .preview-asus .prev-tab-active { color: #1a1a1e; background: #d4a017; padding: 0 4px; }
+  .preview-asus .prev-tab { color: #999999; padding: 0 4px; }
+  .preview-asus .prev-row-sel { background: #d4a017; color: #1a1a1e; }
+  .preview-asus .prev-val { color: #d4a017; }
+
+  .error-toggle-area {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 4px;
+  }
+  .toggle-btn {
+    background: none;
+    border: 1px solid #555;
+    color: #ccc;
+    padding: 6px 16px;
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .toggle-btn:hover { border-color: #d4a017; color: #d4a017; }
+  .toggle-btn.active { border-color: #d4a017; color: #d4a017; background: rgba(212,160,23,0.1); }
+  .toggle-label { color: #777; font-size: 13px; }
+
+  /* ══════════════════════════════════════
+     BIOS SCREEN (shared)
+     ══════════════════════════════════════ */
+  .bios-screen { display: none; flex-direction: column; height: 100vh; }
+  .bios-screen.active { display: flex; }
+
+  /* Error banner */
+  .error-banner {
+    display: none;
+    background: var(--error-bg);
+    color: var(--error-fg);
+    padding: 6px 16px;
+    font-weight: bold;
+    text-align: center;
+    letter-spacing: 0.5px;
+  }
+  .error-banner.visible { display: block; }
+  .error-banner .error-sub {
+    font-weight: normal;
+    font-size: 13px;
+    margin-top: 2px;
+    opacity: 0.85;
+  }
+
+  /* Top banner */
+  .top-banner {
+    background: var(--banner-bg);
+    color: var(--banner-fg);
+    text-align: center;
+    padding: 3px 0;
+    font-weight: bold;
+    letter-spacing: 1px;
+    font-size: 14px;
+  }
+
+  /* Tab bar */
+  .tab-bar {
+    display: flex;
+    justify-content: center;
+    background: var(--bg);
+    padding: 5px 0 0 0;
+  }
+  .tab {
+    padding: 3px 22px;
+    color: var(--tab-fg);
+    background: var(--bg);
+    border: none;
+    font-family: inherit;
+    font-size: inherit;
+    cursor: pointer;
+  }
+  .tab.active {
+    background: var(--tab-active-bg);
+    color: var(--tab-active-fg);
+    font-weight: bold;
+  }
+  .tab:not(.active):hover { color: var(--accent); }
+
+  .divider { background: var(--border); height: 2px; width: 100%; }
+
+  /* Content area */
+  .content-area {
+    flex: 1;
+    display: flex;
+    padding: 8px 16px;
+    overflow: hidden;
+  }
+  .settings-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow-y: auto;
+  }
+  .section-header {
+    color: var(--section-fg);
+    font-weight: bold;
+    padding: 4px 0;
+    margin-top: 10px;
+  }
+  .section-header:first-child { margin-top: 0; }
+  .setting-row {
+    display: flex;
+    padding: 2px 4px;
+    cursor: pointer;
+  }
+  .setting-row:hover { background: var(--hover-bg); }
+  .setting-row.selected {
+    background: var(--highlight-bg);
+    color: var(--highlight-fg);
+  }
+  .setting-row.selected .setting-value { color: var(--highlight-fg); }
+  .setting-label {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .setting-value {
+    color: var(--fg-bright);
+    text-align: right;
+    min-width: 220px;
+    white-space: nowrap;
+  }
+  .setting-value .bracket { color: var(--accent); }
+
+  /* Help panel */
+  .help-panel-wrapper {
+    width: 270px;
+    min-width: 270px;
+    border-left: 2px solid var(--border);
+    margin-left: 16px;
+    padding-left: 12px;
+    display: flex;
+    flex-direction: column;
+  }
+  .help-title {
+    color: var(--fg-bright);
+    font-weight: bold;
+    text-align: center;
+    padding: 4px 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 8px;
+  }
+  .help-text {
+    color: var(--fg);
+    font-size: 13px;
+    line-height: 1.6;
+    flex: 1;
+    white-space: pre-wrap;
+  }
+  .key-hints {
+    margin-top: auto;
+    padding-top: 10px;
+    border-top: 1px solid var(--dim);
+    font-size: 12px;
+  }
+  .key-hint { display: flex; gap: 8px; padding: 1px 0; }
+  .key-hint .key { color: var(--accent); min-width: 70px; }
+  .key-hint .desc { color: var(--fg); }
+
+  /* Bottom bar */
+  .bottom-bar {
+    background: var(--banner-bg);
+    color: var(--banner-fg);
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 3px 16px;
+    font-size: 13px;
+    flex-wrap: wrap;
+  }
+  .bottom-item { display: flex; gap: 4px; }
+  .bottom-key { font-weight: bold; }
+
+  /* Modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 100;
+    justify-content: center;
+    align-items: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-box {
+    background: var(--modal-bg);
+    border: 2px solid var(--border);
+    padding: 16px 24px;
+    min-width: 320px;
+  }
+  .modal-title {
+    color: var(--fg-bright);
+    font-weight: bold;
+    margin-bottom: 12px;
+    text-align: center;
+  }
+  .modal-options { text-align: left; margin: 8px 0; }
+  .modal-option {
+    padding: 2px 8px;
+    cursor: pointer;
+    color: var(--fg);
+  }
+  .modal-option:hover { background: var(--hover-bg); }
+  .modal-option.selected {
+    background: var(--highlight-bg);
+    color: var(--highlight-fg);
+  }
+  .modal-footer {
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--accent);
+    text-align: center;
+  }
+
+  .time-display { color: var(--info); }
+
+  /* Back to theme picker button */
+  .back-btn {
+    position: fixed;
+    top: 0;
+    right: 0;
+    background: rgba(0,0,0,0.5);
+    color: #888;
+    border: none;
+    font-family: inherit;
+    font-size: 11px;
+    padding: 3px 10px;
+    cursor: pointer;
+    z-index: 50;
+    transition: color 0.2s;
+  }
+  .back-btn:hover { color: #fff; }
+</style>
+</head>
+<body>
+
+<!-- ═══ THEME PICKER ═══ -->
+<div class="theme-picker" id="themePicker">
+  <h1>⬡ BIOS / UEFI Simulator</h1>
+  <p>Select a firmware visual style to launch. The simulator is fully interactive — use arrow keys and Enter to navigate, just like a real BIOS.</p>
+
+  <div class="theme-options">
+    <!-- Classic AMI card -->
+    <div class="theme-card" onclick="launchTheme('classic')">
+      <div class="theme-card-preview preview-classic">
+        <div class="prev-banner">Aptio Setup Utility — AMI</div>
+        <div style="display:flex;gap:2px;margin:3px 0;">
+          <span class="prev-tab-active">Main</span>
+          <span class="prev-tab">Advanced</span>
+          <span class="prev-tab">Boot</span>
+        </div>
+        <div style="font-size:10px;margin-top:4px;">
+          <div>BIOS Version&nbsp;&nbsp;&nbsp;&nbsp;F.42</div>
+          <div>Processor&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i7-13700K</div>
+          <div class="prev-row-sel">Hyper-Threading <span class="prev-val">[Enabled]</span></div>
+          <div>Turbo Boost&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="prev-val">[Enabled]</span></div>
+        </div>
+      </div>
+      <div class="theme-card-label">Classic AMI (Blue)</div>
+    </div>
+
+    <!-- ASUS-style card -->
+    <div class="theme-card" onclick="launchTheme('asus')">
+      <div class="theme-card-preview preview-asus">
+        <div class="prev-banner">UEFI BIOS Utility — EZ Mode</div>
+        <div style="display:flex;gap:2px;margin:3px 0;">
+          <span class="prev-tab-active">Main</span>
+          <span class="prev-tab">Advanced</span>
+          <span class="prev-tab">Boot</span>
+        </div>
+        <div style="font-size:10px;margin-top:4px;">
+          <div>BIOS Version&nbsp;&nbsp;&nbsp;&nbsp;3201</div>
+          <div>Processor&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i7-13700K</div>
+          <div class="prev-row-sel">Hyper-Threading <span class="prev-val">[Enabled]</span></div>
+          <div>Turbo Boost&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="prev-val">[Enabled]</span></div>
+        </div>
+      </div>
+      <div class="theme-card-label">Dark + Gold (ASUS-style)</div>
+    </div>
+  </div>
+
+  <div class="error-toggle-area">
+    <span class="toggle-label">Simulate boot error:</span>
+    <button class="toggle-btn" id="toggleError" onclick="toggleErrorMode()">OFF</button>
+  </div>
+</div>
+
+<!-- ═══ BIOS SCREEN ═══ -->
+<div class="bios-screen" id="biosScreen">
+  <button class="back-btn" onclick="backToPicker()">◀ Theme Picker</button>
+
+  <div class="error-banner" id="errorBanner">
+    <div id="errorMsg">⚠ WARNING: Previous boot was unsuccessful.</div>
+    <div class="error-sub" id="errorSub">Press F1 to enter Setup — Press F2 to load default values and continue</div>
+  </div>
+
+  <div class="top-banner" id="topBanner">Aptio Setup Utility - Copyright (C) 2024 American Megatrends, Inc.</div>
+
+  <div class="tab-bar" id="tabBar">
+    <button class="tab active" data-tab="main">Main</button>
+    <button class="tab" data-tab="advanced">Advanced</button>
+    <button class="tab" data-tab="boot">Boot</button>
+    <button class="tab" data-tab="security">Security</button>
+    <button class="tab" data-tab="save">Save &amp; Exit</button>
+  </div>
+  <div class="divider"></div>
+
+  <div class="content-area">
+    <div class="settings-panel" id="settingsPanel"></div>
+    <div class="help-panel-wrapper">
+      <div class="help-title">Item Specific Help</div>
+      <div class="help-text" id="helpText">Use [ENTER] to select a field and modify its value.
+
+Use arrow keys to navigate between items.</div>
+      <div class="key-hints">
+        <div class="key-hint"><span class="key">↑↓</span><span class="desc">Select Item</span></div>
+        <div class="key-hint"><span class="key">←→</span><span class="desc">Select Tab</span></div>
+        <div class="key-hint"><span class="key">Enter</span><span class="desc">Change Value</span></div>
+        <div class="key-hint"><span class="key">+/-</span><span class="desc">Modify Value</span></div>
+        <div class="key-hint"><span class="key">F9</span><span class="desc">Optimized Defaults</span></div>
+        <div class="key-hint"><span class="key">F10</span><span class="desc">Save &amp; Exit</span></div>
+        <div class="key-hint"><span class="key">ESC</span><span class="desc">Exit</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-bar">
+    <div class="bottom-item"><span class="bottom-key">→←</span> Select Screen</div>
+    <div class="bottom-item"><span class="bottom-key">↑↓</span> Select Item</div>
+    <div class="bottom-item"><span class="bottom-key">Enter</span> Select</div>
+    <div class="bottom-item"><span class="bottom-key">+/-</span> Change Value</div>
+    <div class="bottom-item"><span class="bottom-key">F9</span> Setup Defaults</div>
+    <div class="bottom-item"><span class="bottom-key">F10</span> Save &amp; Exit</div>
+  </div>
+</div>
+
+<!-- ═══ MODAL ═══ -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-box">
+    <div class="modal-title" id="modalTitle"></div>
+    <div class="modal-options" id="modalOptions"></div>
+    <div class="modal-footer">↑↓ Move &nbsp; Enter: Select &nbsp; Esc: Cancel</div>
+  </div>
+</div>
+
+<script>
+// ── BIOS DATA ──
+const errorMessages = [
+  { msg: "⚠ WARNING: Previous boot was unsuccessful.", sub: "Press F1 to enter Setup — Press F2 to load default values and continue" },
+  { msg: "⚠ CMOS Checksum Error — Defaults Loaded", sub: "Press F1 to enter Setup — Press F2 to load default values and continue" },
+  { msg: "⚠ Boot Device Not Found — Please install an operating system", sub: "Press F1 to enter Setup — Press F5 to run onboard diagnostics" },
+  { msg: "⚠ CPU Fan Error! Press F1 to enter SETUP", sub: "Check fan connection or change the fan speed setting in BIOS" },
+  { msg: "⚠ Overclocking Failed! Previous settings have been restored.", sub: "Press F1 to enter Setup and reconfigure — Press F2 for Safe Defaults" },
+];
+
+const tabData = {
+  main: {
+    sections: [
+      { title: "System Overview", items: [
+        { label: "BIOS Version", value: "F.42 REV A", readonly: true },
+        { label: "Build Date", value: "06/09/2024", readonly: true },
+        { label: "Processor Type", value: "Intel Core i7-13700K @ 3.40GHz", readonly: true },
+        { label: "Speed", value: "3400 MHz", readonly: true },
+        { label: "Total Memory", value: "32768 MB (DDR5)", readonly: true },
+        { label: "Memory Channel", value: "Dual", readonly: true },
+        { label: "Memory Frequency", value: "4800 MHz", readonly: true },
+      ]},
+      { title: "System Date / Time", items: [
+        { label: "System Date", value: "06/09/2026", help: "Set the system date. Tab switches fields.\nFormat: MM/DD/YYYY" },
+        { label: "System Time", value: null, time: true, help: "Set the system time. Tab switches fields.\nFormat: HH:MM:SS" },
+        { label: "Access Level", value: "Administrator", readonly: true },
+      ]}
+    ]
+  },
+  advanced: {
+    sections: [
+      { title: "CPU Configuration", items: [
+        { label: "Hyper-Threading", value: "Enabled", options: ["Enabled","Disabled"], help: "Enable or disable Intel Hyper-Threading Technology. Each core appears as two logical processors." },
+        { label: "Active Processor Cores", value: "All", options: ["All","1","2","4","8"], help: "Select the number of active processor cores." },
+        { label: "Intel SpeedStep", value: "Enabled", options: ["Enabled","Disabled"], help: "Intel SpeedStep Technology for CPU power management and frequency scaling." },
+        { label: "Turbo Boost", value: "Enabled", options: ["Enabled","Disabled"], help: "Intel Turbo Boost Technology 2.0 allows cores to run above rated frequency." },
+        { label: "C-States", value: "Auto", options: ["Auto","Enabled","Disabled"], help: "CPU C-States for power saving. Auto lets the BIOS choose." },
+        { label: "Intel VT-x", value: "Enabled", options: ["Enabled","Disabled"], help: "Virtualization Technology allows a platform to run multiple OS simultaneously." },
+        { label: "Intel VT-d", value: "Disabled", options: ["Enabled","Disabled"], help: "VT for Directed I/O improves virtualization performance for I/O devices." },
+      ]},
+      { title: "SATA Configuration", items: [
+        { label: "SATA Mode Selection", value: "AHCI", options: ["AHCI","RAID","IDE"], help: "AHCI enables native SATA features.\nRAID enables Intel Rapid Storage." },
+        { label: "SATA Port 0", value: "Samsung 990 PRO 2TB", readonly: true },
+        { label: "SATA Port 1", value: "WD Black SN850X 1TB", readonly: true },
+        { label: "SATA Port 2", value: "Not Detected", readonly: true },
+      ]},
+      { title: "USB Configuration", items: [
+        { label: "Legacy USB Support", value: "Enabled", options: ["Enabled","Disabled","Auto"], help: "Support for USB keyboard/mouse in DOS and BIOS." },
+        { label: "XHCI Hand-off", value: "Enabled", options: ["Enabled","Disabled"], help: "XHCI Hand-off for OS without native XHCI support." },
+      ]}
+    ]
+  },
+  boot: {
+    sections: [
+      { title: "Boot Configuration", items: [
+        { label: "Fast Boot", value: "Disabled", options: ["Enabled","Disabled"], help: "Reduce POST time by skipping some tests. Some devices unavailable during boot." },
+        { label: "Quiet Boot", value: "Enabled", options: ["Enabled","Disabled"], help: "Show or hide the manufacturer logo during POST." },
+        { label: "Boot Mode", value: "UEFI", options: ["UEFI","Legacy","UEFI + Legacy"], help: "UEFI supports GPT disks and Secure Boot.\nLegacy supports MBR disks." },
+        { label: "Secure Boot", value: "Enabled", options: ["Enabled","Disabled"], help: "Protect against unauthorized OS loaders and rootkits." },
+        { label: "Network Stack", value: "Disabled", options: ["Enabled","Disabled"], help: "Enable PXE network boot capability." },
+      ]},
+      { title: "Boot Priority Order", items: [
+        { label: "Boot Option #1", value: "Samsung 990 PRO 2TB", options: ["Samsung 990 PRO 2TB","WD Black SN850X 1TB","USB Device","Network Boot"], help: "First priority boot device." },
+        { label: "Boot Option #2", value: "USB Device", options: ["Samsung 990 PRO 2TB","WD Black SN850X 1TB","USB Device","Network Boot"], help: "Second priority boot device." },
+        { label: "Boot Option #3", value: "Network Boot", options: ["Samsung 990 PRO 2TB","WD Black SN850X 1TB","USB Device","Network Boot"], help: "Third priority boot device." },
+      ]}
+    ]
+  },
+  security: {
+    sections: [
+      { title: "Security Settings", items: [
+        { label: "Administrator Password", value: "Not Installed", help: "Set the administrator password for entering BIOS Setup." },
+        { label: "User Password", value: "Not Installed", help: "Set the user password. Limited BIOS access." },
+        { label: "Password on Boot", value: "Disabled", options: ["Enabled","Disabled"], help: "Require password at every system boot." },
+      ]},
+      { title: "TPM Configuration", items: [
+        { label: "Security Device Support", value: "Enabled", options: ["Enabled","Disabled"], help: "Enable or disable the TPM security device." },
+        { label: "TPM Device", value: "Intel PTT", readonly: true },
+        { label: "TPM State", value: "Enabled & Activated", readonly: true },
+        { label: "SHA-256 PCR Bank", value: "Enabled", options: ["Enabled","Disabled"], help: "SHA-256 PCR bank for platform integrity measurements." },
+      ]}
+    ]
+  },
+  save: {
+    sections: [
+      { title: "Save & Exit Options", items: [
+        { label: "Save Changes and Exit", value: "", action: true, help: "Save changes to CMOS and reboot." },
+        { label: "Discard Changes and Exit", value: "", action: true, help: "Discard changes and reboot." },
+        { label: "Save Changes", value: "", action: true, help: "Save current changes without exiting." },
+        { label: "Discard Changes", value: "", action: true, help: "Restore previous CMOS values." },
+        { label: "Restore Defaults", value: "", action: true, help: "Load factory default values for all settings." },
+      ]}
+    ]
+  }
+};
+
+const bannerText = {
+  classic: "Aptio Setup Utility - Copyright (C) 2024 American Megatrends, Inc.",
+  asus: "UEFI BIOS Utility - Advanced Mode"
+};
+
+// ── STATE ──
+let currentTab = "main";
+let selectedIndex = 0;
+let allItems = [];
+let modalOpen = false;
+let modalSelectedIndex = 0;
+let modalOptionsArr = [];
+let modalItemIndex = -1;
+let showError = false;
+let currentTheme = "classic";
+
+// ── THEME PICKER ──
+function toggleErrorMode() {
+  showError = !showError;
+  const btn = document.getElementById('toggleError');
+  btn.textContent = showError ? "ON" : "OFF";
+  btn.classList.toggle('active', showError);
+}
+
+function launchTheme(theme) {
+  currentTheme = theme;
+  document.body.className = `theme-${theme}`;
+  document.getElementById('themePicker').classList.add('hidden');
+  document.getElementById('biosScreen').classList.add('active');
+  document.getElementById('topBanner').textContent = bannerText[theme];
+
+  if (showError) {
+    const err = errorMessages[Math.floor(Math.random() * errorMessages.length)];
+    document.getElementById('errorMsg').textContent = err.msg;
+    document.getElementById('errorSub').textContent = err.sub;
+    document.getElementById('errorBanner').classList.add('visible');
+    // On error, default to boot tab
+    currentTab = "boot";
+    switchTab("boot");
+  } else {
+    document.getElementById('errorBanner').classList.remove('visible');
+    currentTab = "main";
+    switchTab("main");
+  }
+  renderSettings();
+}
+
+function backToPicker() {
+  document.body.className = '';
+  document.getElementById('themePicker').classList.remove('hidden');
+  document.getElementById('biosScreen').classList.remove('active');
+  document.getElementById('errorBanner').classList.remove('visible');
+  currentTab = "main";
+  selectedIndex = 0;
+}
+
+// ── RENDER ──
+function getTimeString() {
+  const now = new Date();
+  return now.toLocaleTimeString('en-US', { hour12: false });
+}
+
+function renderSettings() {
+  const panel = document.getElementById('settingsPanel');
+  const data = tabData[currentTab];
+  allItems = [];
+  let html = '';
+  let globalIdx = 0;
+
+  data.sections.forEach(section => {
+    html += `<div class="section-header">${section.title}</div>`;
+    section.items.forEach(item => {
+      const isSelected = globalIdx === selectedIndex;
+      const cls = isSelected ? 'setting-row selected' : 'setting-row';
+      let valDisplay;
+      if (item.time) {
+        valDisplay = `<span class="time-display">${getTimeString()}</span>`;
+      } else if (item.action) {
+        valDisplay = '';
+      } else if (item.options) {
+        valDisplay = `<span class="bracket">[</span>${item.value}<span class="bracket">]</span>`;
+      } else {
+        valDisplay = item.value;
+      }
+      const prefix = item.action ? '▸ ' : '  ';
+      html += `<div class="${cls}" data-idx="${globalIdx}" onclick="selectAndMaybeOpen(${globalIdx})">
+        <span class="setting-label">${prefix}${item.label}</span>
+        <span class="setting-value">${valDisplay}</span>
+      </div>`;
+      allItems.push({ ...item, globalIdx });
+      globalIdx++;
+    });
+  });
+
+  panel.innerHTML = html;
+  updateHelp();
+}
+
+function updateHelp() {
+  const helpEl = document.getElementById('helpText');
+  const item = allItems[selectedIndex];
+  if (item && item.help) {
+    helpEl.textContent = item.help;
+  } else if (item && item.readonly) {
+    helpEl.textContent = "Read-only field.\nShows current hardware information detected by the BIOS.";
+  } else {
+    helpEl.textContent = "Use [ENTER] to select a field and modify its value.\n\nUse arrow keys to navigate.";
+  }
+}
+
+function selectAndMaybeOpen(idx) {
+  selectedIndex = idx;
+  renderSettings();
+  openModal(idx);
+}
+
+function switchTab(tabName) {
+  currentTab = tabName;
+  selectedIndex = 0;
+  document.querySelectorAll('.tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.tab === tabName);
+  });
+  renderSettings();
+}
+
+// ── MODAL ──
+function openModal(itemIdx) {
+  const item = allItems[itemIdx];
+  if (!item || item.readonly) return;
+  if (item.action) {
+    const row = document.querySelector(`[data-idx="${itemIdx}"]`);
+    if (row) {
+      row.style.background = 'var(--accent)';
+      row.style.color = 'var(--bg)';
+      setTimeout(() => renderSettings(), 250);
+    }
+    return;
+  }
+  if (!item.options) return;
+
+  modalOpen = true;
+  modalItemIndex = itemIdx;
+  modalOptionsArr = item.options;
+  modalSelectedIndex = modalOptionsArr.indexOf(item.value);
+  if (modalSelectedIndex < 0) modalSelectedIndex = 0;
+
+  document.getElementById('modalTitle').textContent = item.label;
+  renderModalOptions();
+  document.getElementById('modal').classList.add('open');
+}
+
+function renderModalOptions() {
+  const container = document.getElementById('modalOptions');
+  container.innerHTML = modalOptionsArr.map((opt, i) => {
+    const cls = i === modalSelectedIndex ? 'modal-option selected' : 'modal-option';
+    return `<div class="${cls}" onclick="selectModalOption(${i})">${opt}</div>`;
+  }).join('');
+}
+
+function selectModalOption(i) {
+  modalSelectedIndex = i;
+  confirmModal();
+}
+
+function confirmModal() {
+  let globalIdx = 0;
+  const data = tabData[currentTab];
+  for (const section of data.sections) {
+    for (const sItem of section.items) {
+      if (globalIdx === modalItemIndex) {
+        sItem.value = modalOptionsArr[modalSelectedIndex];
+        break;
+      }
+      globalIdx++;
+    }
+  }
+  closeModal();
+  renderSettings();
+}
+
+function closeModal() {
+  modalOpen = false;
+  document.getElementById('modal').classList.remove('open');
+}
+
+// ── KEYBOARD ──
+document.addEventListener('keydown', e => {
+  // Don't capture if on theme picker
+  if (!document.getElementById('biosScreen').classList.contains('active')) return;
+  e.preventDefault();
+
+  if (modalOpen) {
+    switch (e.key) {
+      case 'ArrowUp': modalSelectedIndex = Math.max(0, modalSelectedIndex - 1); renderModalOptions(); break;
+      case 'ArrowDown': modalSelectedIndex = Math.min(modalOptionsArr.length - 1, modalSelectedIndex + 1); renderModalOptions(); break;
+      case 'Enter': confirmModal(); break;
+      case 'Escape': closeModal(); break;
+    }
+    return;
+  }
+
+  const tabs = ['main','advanced','boot','security','save'];
+  const tabIdx = tabs.indexOf(currentTab);
+
+  switch (e.key) {
+    case 'ArrowUp': selectedIndex = Math.max(0, selectedIndex - 1); renderSettings(); break;
+    case 'ArrowDown': selectedIndex = Math.min(allItems.length - 1, selectedIndex + 1); renderSettings(); break;
+    case 'ArrowLeft': if (tabIdx > 0) switchTab(tabs[tabIdx - 1]); break;
+    case 'ArrowRight': if (tabIdx < tabs.length - 1) switchTab(tabs[tabIdx + 1]); break;
+    case 'Enter': openModal(selectedIndex); break;
+    case '+': case '=': cycleValue(1); break;
+    case '-': cycleValue(-1); break;
+    case 'Escape': backToPicker(); break;
+  }
+});
+
+function cycleValue(direction) {
+  const item = allItems[selectedIndex];
+  if (!item || !item.options) return;
+  const curIdx = item.options.indexOf(item.value);
+  let newIdx = curIdx + direction;
+  if (newIdx < 0) newIdx = item.options.length - 1;
+  if (newIdx >= item.options.length) newIdx = 0;
+  let globalIdx = 0;
+  const data = tabData[currentTab];
+  for (const section of data.sections) {
+    for (const sItem of section.items) {
+      if (globalIdx === selectedIndex) { sItem.value = item.options[newIdx]; break; }
+      globalIdx++;
+    }
+  }
+  renderSettings();
+}
+
+// Tab clicks
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+});
+
+// Clock
+setInterval(() => {
+  document.querySelectorAll('.time-display').forEach(el => { el.textContent = getTimeString(); });
+}, 1000);
+</script>
+</body>
+</html>
